@@ -35,9 +35,7 @@ app.layout = html.Div([
     ),
     dcc.Store(id='dataframe'),
     html.Div(id='output-data-upload'),
-    html.Div(id='column-dropdown-1-x'),
-    html.Div(id='column-dropdown-2-y'),
-    html.Div(id='column-dropdown-2-color'),
+    html.Div(id='dropdowns'),
     html.Div(id='bivariate-graph')
 ])
 
@@ -95,37 +93,21 @@ def show_table(data_dict):
     ])
 
 @app.callback(
-    Output('column-dropdown-1-x', 'children'),
+    Output('dropdowns', 'children'),
     Input('dataframe', 'data'),
     prevent_initial_call=True
 )
-def show_column_dropdown(data_dict):
+def create_dropdowns(data_dict):
     if data_dict:
         df = pd.DataFrame.from_dict(data_dict)
-        return dcc.Dropdown(df.columns,
-                            id='dropdown-1-x')
-
-@app.callback(
-    Output('column-dropdown-2-y', 'children'),
-    Input('dataframe', 'data'),
-    prevent_initial_call=True
-)
-def show_column_dropdown(data_dict):
-    if data_dict:
-        df = pd.DataFrame.from_dict(data_dict)
-        return dcc.Dropdown(df.columns,
-                            id='dropdown-2-y')
-
-@app.callback(
-    Output('column-dropdown-2-color', 'children'),
-    Input('dataframe', 'data'),
-    prevent_initial_call=True
-)
-def show_column_dropdown(data_dict):
-    if data_dict:
-        df = pd.DataFrame.from_dict(data_dict)
-        return dcc.Dropdown(df.columns,
-                            id='dropdown-3-color')
+        return html.Div([
+            dcc.Dropdown(df.columns,
+                        id='dropdown-1-x'),
+            dcc.Dropdown(df.columns,
+                        id='dropdown-2-y'),
+            dcc.Dropdown(df.columns,
+                        id='dropdown-3-color'),
+        ]) 
 
 @app.callback(
     Output('bivariate-graph', 'children'),
@@ -142,6 +124,13 @@ def make_bivariate_graph(data_dict, x, y, color):
         df = pd.DataFrame.from_dict(data_dict)
         fig = px.scatter(data_frame=df, x=x, y=y, color=color)
         return dcc.Graph(figure=fig, id='a')
+
+# @app.callback(
+#     Output('patata', 'children'),
+#     Input
+# )
+# def show_scatter(data_dict, x, y, color):
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
