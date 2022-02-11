@@ -35,8 +35,9 @@ app.layout = html.Div([
     ),
     dcc.Store(id='dataframe'),
     html.Div(id='output-data-upload'),
-    html.Div(id='column-dropdown-1'),
-    html.Div(id='column-dropdown-2'),
+    html.Div(id='column-dropdown-1-x'),
+    html.Div(id='column-dropdown-2-y'),
+    html.Div(id='column-dropdown-2-color'),
     html.Div(id='bivariate-graph')
 ])
 
@@ -94,7 +95,7 @@ def show_table(data_dict):
     ])
 
 @app.callback(
-    Output('column-dropdown-1', 'children'),
+    Output('column-dropdown-1-x', 'children'),
     Input('dataframe', 'data'),
     prevent_initial_call=True
 )
@@ -102,10 +103,10 @@ def show_column_dropdown(data_dict):
     if data_dict:
         df = pd.DataFrame.from_dict(data_dict)
         return dcc.Dropdown(df.columns,
-                            id='dropdown-1')
+                            id='dropdown-1-x')
 
 @app.callback(
-    Output('column-dropdown-2', 'children'),
+    Output('column-dropdown-2-y', 'children'),
     Input('dataframe', 'data'),
     prevent_initial_call=True
 )
@@ -113,21 +114,33 @@ def show_column_dropdown(data_dict):
     if data_dict:
         df = pd.DataFrame.from_dict(data_dict)
         return dcc.Dropdown(df.columns,
-                            id='dropdown-2')
+                            id='dropdown-2-y')
+
+@app.callback(
+    Output('column-dropdown-2-color', 'children'),
+    Input('dataframe', 'data'),
+    prevent_initial_call=True
+)
+def show_column_dropdown(data_dict):
+    if data_dict:
+        df = pd.DataFrame.from_dict(data_dict)
+        return dcc.Dropdown(df.columns,
+                            id='dropdown-3-color')
 
 @app.callback(
     Output('bivariate-graph', 'children'),
     Input('dataframe', 'data'),
-    Input('dropdown-1', 'value'),
-    Input('dropdown-2', 'value'),
+    Input('dropdown-1-x', 'value'),
+    Input('dropdown-2-y', 'value'),
+    Input('dropdown-3-color', 'value'),
     prevent_initial_call=True
 )
-def make_bivariate_graph(data_dict, x, y):
+def make_bivariate_graph(data_dict, x, y, color):
     ## De esta forma solamente aparece el plot una vez hemos seleccionado
     ## dos columnas en los dropdows. Así nos evitamos algunos errores.
     if (x is not None) and (y is not None):
         df = pd.DataFrame.from_dict(data_dict)
-        fig = px.scatter(data_frame=df, x=x, y=y)
+        fig = px.scatter(data_frame=df, x=x, y=y, color=color)
         return dcc.Graph(figure=fig, id='a')
 
 if __name__ == '__main__':
