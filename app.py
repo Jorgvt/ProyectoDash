@@ -9,15 +9,6 @@ from dash import dash_table, dcc, html
 import pandas as pd
 import plotly.express as px
 
-class Data():
-    
-    def __init__(self):
-        self.data = ["A", "B"]
-
-    def store(self, data):
-        self.data = data
-
-data = Data()
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
@@ -58,11 +49,9 @@ def parse_contents_to_df(contents, filename, date):
             # Assume that the user uploaded a CSV file
             df = pd.read_csv(
                 io.StringIO(decoded.decode('utf-8')))
-            data.store(df)
         elif 'xls' in filename:
             # Assume that the user uploaded an excel file
             df = pd.read_excel(io.BytesIO(decoded))
-            data.store(df)
     except Exception as e:
         print(e)
         return html.Div([
