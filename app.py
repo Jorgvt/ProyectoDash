@@ -101,12 +101,24 @@ def create_dropdowns(data_dict):
     if data_dict:
         df = pd.DataFrame.from_dict(data_dict)
         return html.Div([
-            dcc.Dropdown(df.columns,
-                        id='dropdown-1-x'),
-            dcc.Dropdown(df.columns,
+            html.Div([
+                html.Div('x', style={'textAlign':'center'}),
+                dcc.Dropdown(df.columns,
+                             id='dropdown-1-x')
+            ], style={'width': '33%', 'display': 'inline-block'}
+            ),
+            html.Div([
+                html.Div('y', style={'textAlign':'center'}),
+                dcc.Dropdown(df.columns,
                         id='dropdown-2-y'),
-            dcc.Dropdown(df.columns,
-                        id='dropdown-3-color'),
+            ], style={'width': '33%', 'display': 'inline-block'}
+            ),
+            html.Div([
+                html.Div('color', style={'textAlign':'center'}),
+                dcc.Dropdown(df.columns,
+                        id='dropdown-3-color'), 
+            ], style={'width': '33%', 'display': 'inline-block'}
+            )
         ]) 
 
 @app.callback(
