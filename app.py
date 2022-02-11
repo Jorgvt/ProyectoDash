@@ -123,10 +123,12 @@ def show_column_dropdown(data_dict):
     prevent_initial_call=True
 )
 def make_bivariate_graph(data_dict, x, y):
-    print(x, y)
-    df = pd.DataFrame.from_dict(data_dict)
-    fig = px.scatter(data_frame=df, x=x, y=y)
-    return dcc.Graph(figure=fig, id='a')
+    ## De esta forma solamente aparece el plot una vez hemos seleccionado
+    ## dos columnas en los dropdows. Así nos evitamos algunos errores.
+    if (x is not None) and (y is not None):
+        df = pd.DataFrame.from_dict(data_dict)
+        fig = px.scatter(data_frame=df, x=x, y=y)
+        return dcc.Graph(figure=fig, id='a')
 
 if __name__ == '__main__':
     app.run_server(debug=True)
