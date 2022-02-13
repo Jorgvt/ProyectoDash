@@ -9,11 +9,14 @@ from dash import dash_table, dcc, html
 import pandas as pd
 import plotly.express as px
 
+from pages import page1, page2
+
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
 
 app.layout = html.Div([
+    dcc.Location(id='url', refresh=False),
     dcc.Upload(
         id='upload-data',
         children=html.Div([
@@ -36,7 +39,12 @@ app.layout = html.Div([
     dcc.Store(id='dataframe'),
     html.Div(id='output-data-upload'),
     html.Div(id='dropdowns'),
-    html.Div(id='bivariate-graph')
+    html.Div(id='bivariate-graph'),
+    html.Div([
+        dcc.Link(html.Button('Navigate to page 1'), href='/page1'),
+        dcc.Link(html.Button('Navigate to page 2'), href='/page2')
+    ]),
+    html.Div(id='page-content')
 ])
 
 def parse_contents_to_df(contents, filename, date):
@@ -137,12 +145,17 @@ def make_bivariate_graph(data_dict, x, y, color):
         fig = px.scatter(data_frame=df, x=x, y=y, color=color)
         return dcc.Graph(figure=fig, id='a')
 
-# @app.callback(
-#     Output('patata', 'children'),
-#     Input
-# )
-# def show_scatter(data_dict, x, y, color):
-
+@app.callback(
+    Output('page-content', 'children'),
+    Input('url', 'pathname')
+)
+def display_page(pathname):
+    if pathname == '/page1':
+        return page1.layout
+    elif pathname == '/page2':
+        return page2.layout
+    else:
+        return html.Div("Nope.")
 
 if __name__ == '__main__':
     app.run_server(debug=True)
