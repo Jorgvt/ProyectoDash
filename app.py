@@ -9,7 +9,7 @@ from dash import dash_table, dcc, html
 import pandas as pd
 import plotly.express as px
 
-from pages import page1, page2
+from pages import univariate, bivariate 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -38,11 +38,10 @@ app.layout = html.Div([
     ),
     dcc.Store(id='dataframe'),
     html.Div(id='output-data-upload'),
-    html.Div(id='dropdowns'),
-    html.Div(id='bivariate-graph'),
     html.Div([
-        dcc.Link(html.Button('Navigate to page 1'), href='/page1'),
-        dcc.Link(html.Button('Navigate to page 2'), href='/page2')
+        dcc.Link(html.Button('Clear'), href='/'),
+        dcc.Link(html.Button('Análisis Univariante'), href='/page1'),
+        dcc.Link(html.Button('Análisis Bivariante'), href='/page2')
     ]),
     html.Div(id='page-content')
 ])
@@ -101,59 +100,14 @@ def show_table(data_dict):
     ])
 
 @app.callback(
-    Output('dropdowns', 'children'),
-    Input('dataframe', 'data'),
-    prevent_initial_call=True
-)
-def create_dropdowns(data_dict):
-    if data_dict:
-        df = pd.DataFrame.from_dict(data_dict)
-        return html.Div([
-            html.Div([
-                html.Div('x', style={'textAlign':'center'}),
-                dcc.Dropdown(df.columns,
-                             id='dropdown-1-x')
-            ], style={'width': '33%', 'display': 'inline-block'}
-            ),
-            html.Div([
-                html.Div('y', style={'textAlign':'center'}),
-                dcc.Dropdown(df.columns,
-                        id='dropdown-2-y'),
-            ], style={'width': '33%', 'display': 'inline-block'}
-            ),
-            html.Div([
-                html.Div('color', style={'textAlign':'center'}),
-                dcc.Dropdown(df.columns,
-                        id='dropdown-3-color'), 
-            ], style={'width': '33%', 'display': 'inline-block'}
-            )
-        ]) 
-
-@app.callback(
-    Output('bivariate-graph', 'children'),
-    Input('dataframe', 'data'),
-    Input('dropdown-1-x', 'value'),
-    Input('dropdown-2-y', 'value'),
-    Input('dropdown-3-color', 'value'),
-    prevent_initial_call=True
-)
-def make_bivariate_graph(data_dict, x, y, color):
-    ## De esta forma solamente aparece el plot una vez hemos seleccionado
-    ## dos columnas en los dropdows. Así nos evitamos algunos errores.
-    if (x is not None) and (y is not None):
-        df = pd.DataFrame.from_dict(data_dict)
-        fig = px.scatter(data_frame=df, x=x, y=y, color=color)
-        return dcc.Graph(figure=fig, id='a')
-
-@app.callback(
     Output('page-content', 'children'),
     Input('url', 'pathname')
 )
 def display_page(pathname):
     if pathname == '/page1':
-        return page1.layout
+        return univariate.layout
     elif pathname == '/page2':
-        return page2.layout
+        return bivariate.layout
     else:
         return html.Div("Nope.")
 
