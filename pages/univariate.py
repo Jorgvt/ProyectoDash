@@ -19,7 +19,7 @@ def display_dd(data_dict):
     if data_dict:
         df = pd.DataFrame.from_dict(data_dict)
         return html.Div([
-            dcc.Dropdown(df.columns, id='dd-univ'),
+            dcc.Dropdown(df.columns, id='dd-univ', multi=True),
             dcc.RadioItems(['Histogram', 'Boxplot'],
                            'Histogram',
                            id='univariate-kind',
@@ -39,4 +39,6 @@ def showcase_df_cols(data_dict, x, kind):
             fig = px.box(data_frame=df, y=x)
         else:
             fig = px.histogram(data_frame=df, x=x)
+            if len(x) > 1:
+                fig.update_traces(opacity=0.60)
         return dcc.Graph(id='histogram', figure=fig)
