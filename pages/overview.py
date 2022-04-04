@@ -7,35 +7,56 @@ import plotly.express as px
 
 layout = html.Div([
     html.H3("Overview"),
-    html.Div(id='describe'),
+    html.Div(id='shape'),
+    html.Div(id='ranges'),
+    html.Div(id='nans'),
 ])
 
-# @callback(
-#     Output('describe', 'children'),
-#     Input('dataframe', 'data')
-# )
-# def display_dd(data_dict):
-#     if data_dict:
-#         df = pd.DataFrame.from_dict(data_dict)
-#         return html.Div(df.describe(), id='paparrapa')
-
 @callback(
-    Output('describe', 'children'),
+    Output('shape', 'children'),
     Input('dataframe', 'data')
 )
-def show_describe(data_dict):
+def show_shape(data_dict):
     if data_dict:
-        df = pd.DataFrame.from_dict(data_dict).describe()
-        df['metric'] = df.index
+        df = pd.DataFrame.from_dict(data_dict)
         return html.Div([
-            dash_table.DataTable(
-                df.to_dict('records'),
-                [{'name': i, 'id': i} for i in df.columns],
-                page_size=10, # Cantidad de columnas que se muestran
-                # virtualization=True,
-                # fixed_rows={'headers':True},
-                style_table={#'height':'330px', 
-                            #  'overflowY': 'auto', # Scroll vertical
-                            'overflowX': 'auto'} # Scroll horizontal
-            ),
+            html.Div('El dataframe cargado tiene {} filas y {} columnas.'.format(*df.shape)),
+        ])
+
+@callback(
+    Output('ranges', 'children'),
+    Input('dataframe', 'data')
+)
+def show_ranges(data_dict):
+    if data_dict:
+        df = pd.DataFrame.from_dict(data_dict).melt()
+        fig = px.box(df, x='variable', y='value')
+        fig.update_layout(
+            xaxis_title='Variable',
+            yaxis_title=''
+        )
+        fig.update_xaxes(tickangle=45)
+        return html.Div([
+            html.H4('Distribuciones'),
+            dcc.Graph(figure=fig, id='box')
+        ])
+
+@callback(
+    Output('nans', 'children'),
+    Input('dataframe', 'data')
+)
+def plot_nans(data_dict):
+    if data_dict:
+        df = pd.DataFrame.from_dict(data_dict)
+        fig = px.bar(data_frame=df.isna().sum(),
+                     title='NaNs por variable')
+        fig.update_layout(
+            xaxis_title='Variable',
+            yaxis_title='Cantidad de NaNs',
+            showlegend=False,
+        )
+        fig.update_xaxes(tickangle=45)
+        return html.Div([
+            html.H4('Datos faltantes'),
+            dcc.Graph(figure=fig, id='fig_nan')
         ])
