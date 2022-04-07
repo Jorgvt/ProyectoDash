@@ -9,7 +9,7 @@ from dash import dash_table, dcc, html
 import pandas as pd
 import plotly.express as px
 
-from pages import overview, univariate, bivariate 
+from pages import overview, univariate, bivariate, landing
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -39,7 +39,7 @@ app.layout = html.Div([
     dcc.Store(id='dataframe'),
     html.Div(id='output-data-upload'),
     html.Div([
-        dcc.Link(html.Button('Clear'), href='/'),
+        dcc.Link(html.Button('Home'), href='/'),
         dcc.Link(html.Button('Overview'), href='/overview'),
         dcc.Link(html.Button('Análisis Univariante'), href='/univariate'),
         dcc.Link(html.Button('Análisis Bivariante'), href='/bivariate'),
@@ -112,7 +112,7 @@ def display_page(pathname):
     elif pathname == '/overview':
         return overview.layout
     else:
-        return html.Div("Nope.")
+        return landing.layout
 
 if __name__ == '__main__':
     app.run_server(debug=True)
