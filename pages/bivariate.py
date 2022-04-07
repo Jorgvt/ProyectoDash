@@ -7,13 +7,6 @@ import plotly.express as px
 
 layout = html.Div([
     html.H3("Análisis Bivariante"),
-    html.Div([
-        html.Div('Elige el tipo de plot que quieres realizar: '),
-        dcc.RadioItems(['Scatter', 'Line'],
-                       'Scatter',
-                       id='kind-plot',
-                       inline=True)
-    ]),
     html.Div(id='dd-biv-div'),
     html.Div(id='bivariate-graph')
 ])
@@ -29,6 +22,13 @@ def create_dropdowns(data_dict):
         # colorscales = ['None'] if kind_plot == 'Line' else ['viridis', 'jet', 'magma', 'bluered']
         colorscales = ['viridis', 'jet', 'magma', 'bluered']
         return html.Div([
+            html.Div([
+            html.Div('Elige el tipo de plot que quieres realizar: '),
+            dcc.RadioItems(['Scatter', 'Line'],
+                        'Scatter',
+                        id='kind-plot',
+                        inline=True)
+            ]),
             html.Div([
                 html.Div('x', style={'textAlign':'center'}),
                 dcc.Dropdown(df.columns,
