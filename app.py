@@ -1,5 +1,6 @@
 import base64
 import datetime
+from http import server
 import io
 
 import dash
@@ -14,6 +15,7 @@ from pages import overview, univariate, bivariate, landing
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
+server = app.server
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
